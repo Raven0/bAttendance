@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">bAttendance</string>
+    <string name="belum_registrasi">Belum Registrasi?</string>
+    <string name="sudah_registrasi">Sudah Registrasi?</string>
+    <string name="klik_disini"><u>Klik Disini</u></string>
+    <string name="klik_login"><u>Login</u></string>
+    <string name="lanjutkan">Lanjutkan</string>
+    <string name="registrasi">Registrasi</string>
+    <string name="masukkan_nik">Masukkan NIK</string>
+    <string name="apakah_benar_data_ini_adalah_anda">Apakah Benar Data Ini Adalah Anda ?</string>
+</resources>
