@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "1021664422498",
+    "firebase_url": "https://battendance0.firebaseio.com",
+    "project_id": "battendance0",
+    "storage_bucket": "battendance0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1021664422498:android:936f4392dcf20d9f",
+        "android_client_info": {
+          "package_name": "com.birutekno.battendance"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1021664422498-n1tefr7vfc1d4dq3mbt7mftronm3c2bl.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.birutekno.battendance",
+            "certificate_hash": "355e76b96471a407770d0f128d2b3177068ff402"
+          }
+        },
+        {
+          "client_id": "1021664422498-u85k4mh67l58oichp5r66m0439kg77aa.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCzBaUSNemaB8U37v8xkgKf1MC2DAX4sBE"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1021664422498-u85k4mh67l58oichp5r66m0439kg77aa.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
