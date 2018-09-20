@@ -48,6 +48,7 @@ public class ScanActivity extends AppCompatActivity {
                 ScanActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        //TODO : buat sistem untuk UPDATE status qrCode di tabel verifikasi
                         Intent intent = new Intent(ScanActivity.this, TfaActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

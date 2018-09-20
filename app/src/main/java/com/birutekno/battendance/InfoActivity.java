@@ -27,13 +27,16 @@ public class InfoActivity extends AppCompatActivity {
         btn_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                login();
+                login(tv_nik);
             }
         });
     }
 
-    private void login(){
-        Intent intent = new Intent(InfoActivity.this, MainActivity.class);
+    private void login(TextView tv_nik){
+        // TODO: pake sistem LOGIN
+        // TODO: masukkan RESPONSE ke SharedPreference
+        String nik = tv_nik.getText().toString().trim();
+        Intent intent = new Intent(InfoActivity.this, PinActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }

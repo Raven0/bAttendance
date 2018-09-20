@@ -50,6 +50,7 @@ public class HistoryActivity extends AppCompatActivity {
     }
 
     private void loadJSON(){
+        //TODO: Buat sistem untuk menerima RESPONSE History
         History[] data = new History[6];
         data[0] = new History();
         data[0].setId("1");

@@ -24,6 +24,7 @@ import es.dmoral.toasty.Toasty;
 
 public class MainActivity extends AppCompatActivity {
 
+    // TODO: buat gradien instagram untuk header
     LinearLayout layoutHeader;
     TextView tv_clock;
     TextView tv_date;
@@ -140,6 +141,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void absen(){
+        // TODO: Buat validasi absensi (Hanya bisa 1x dalam 1 hari)
+        // TODO: Buat sistem untuk menambah data baru di tabel Absen
         Intent intent = new Intent(MainActivity.this, ScanActivity.class);
         startActivity(intent);
     }
@@ -154,6 +157,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void formPulang(Bundle savedInstanceState) {
+        // TODO: Buat validasi absensi (Hanya bisa 1x dalam 1 hari)
+        // TODO: Buat sistem untuk menambah data baru di tabel Absen
         new LovelyTextInputDialog(this, R.style.EditTextTintTheme)
                 .setTopColorRes(R.color.colorPrimary)
                 .setTitle("Form Pulang")
@@ -172,6 +177,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void formLembur(Bundle savedInstanceState) {
+        // TODO: Buat sistem untuk menambah data baru di tabel Lembur
         new LovelyTextInputDialog(this, R.style.EditTextTintTheme)
                 .setTopColorRes(R.color.colorPrimary)
                 .setTitle("Form Lembur")

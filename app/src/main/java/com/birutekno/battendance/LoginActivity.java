@@ -39,9 +39,10 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void login(EditText et_nik){
+        // TODO: buat sistem login parameter NIK dengan RESPONSE ID/NIK karyawan, STATUS, dan TOKEN
+        // TODO: masukkan RESPONSE ke SharedPreference
         String nik = et_nik.getText().toString().trim();
         Intent intent = new Intent(LoginActivity.this, PinActivity.class);
-        intent.putExtra("nik", nik);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }

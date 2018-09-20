@@ -80,6 +80,7 @@ public class PinActivity extends AppCompatActivity implements View.OnClickListen
         btn_clear.setOnClickListener(this);
         btn_del.setOnClickListener(this);
 
+        // TODO : Panggil data pin karyawan dari database untuk mendeteksi perubahan device
         if (getSharedPref() == null){
             Toasty.info(this, "Buat Pin terlebih dahulu!", Toast.LENGTH_SHORT, true).show();
         }else {
@@ -110,6 +111,7 @@ public class PinActivity extends AppCompatActivity implements View.OnClickListen
         }else if (view == btn_zero){
             assignPin(0);
         }else if (view == btn_clear){
+            // TODO: buat action untuk lupa pin dengan klik tombol clear 5x
             clearPin();
         }else if (view == btn_del){
             delPin();
@@ -192,6 +194,7 @@ public class PinActivity extends AppCompatActivity implements View.OnClickListen
         String pin = pinArray[0] + pinArray[1] + pinArray[2] + pinArray[3] + pinArray[4] + pinArray[5];
 
         if (getSharedPref() == null){
+            // TODO: set pin masuk ke database
             setSharedPref(pin);
             Toasty.success(this, "Pin Berhasil Dibuat!", Toast.LENGTH_SHORT, true).show();
             Intent restartIntent = new Intent(PinActivity.this, PinActivity.class);

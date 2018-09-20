@@ -210,6 +210,8 @@ public class TfaActivity extends AppCompatActivity implements View.OnClickListen
         String pin = pinArray[0] + pinArray[1] + pinArray[2] + pinArray[3];
 
         if (pinCheck.equals(pin)){
+            //TODO : buat sistem untuk UPDATE status pin di tabel verifikasi
+            //TODO : buat sistem untuk UPDATE verifikasi_id di tabel Absensi
             Intent intent = new Intent(TfaActivity.this, MainActivity.class);
             Toasty.success(this, "Berhasil!", Toast.LENGTH_SHORT, true).show();
             startActivity(intent);
