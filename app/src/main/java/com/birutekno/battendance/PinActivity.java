@@ -1,5 +1,6 @@
 package com.birutekno.battendance;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -10,11 +11,20 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.birutekno.battendance.helper.AttendanceApi;
+import com.birutekno.battendance.model.AuthModel;
+import com.birutekno.battendance.model.Karyawan;
+
+import java.util.HashMap;
+
 import es.dmoral.toasty.Toasty;
+import retrofit2.Call;
+import retrofit2.Callback;
 
 public class PinActivity extends AppCompatActivity implements View.OnClickListener{
 
-    public static final String PREFS_NAME = "PIN";
+    public static final String PREFS_PIN = "PIN";
+    public static final String PREFS_NAME = "AUTH";
 
     String[] pinArray = new String[6];
 
@@ -37,6 +47,8 @@ public class PinActivity extends AppCompatActivity implements View.OnClickListen
     Button btn_zero;
     Button btn_clear;
     Button btn_del;
+
+    ProgressDialog progress_dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,10 +93,22 @@ public class PinActivity extends AppCompatActivity implements View.OnClickListen
         btn_del.setOnClickListener(this);
 
         // TODO : Panggil data pin karyawan dari database untuk mendeteksi perubahan device
-        if (getSharedPref() == null){
-            Toasty.info(this, "Buat Pin terlebih dahulu!", Toast.LENGTH_SHORT, true).show();
-        }else {
-            Toasty.info(this, "Masukkan Pin!", Toast.LENGTH_SHORT, true).show();
+        if (getSharedPrefPin() == null){
+            //BUAT PIN
+            if (getSharedPref() != null){
+                Toasty.info(this, "Buat Pin terlebih dahulu!", Toast.LENGTH_SHORT, true).show();
+                Toasty.warning(this, "Device diganti!", Toast.LENGTH_SHORT, true).show();
+            }else{
+                Toasty.info(this, "Buat Pin terlebih dahulu!", Toast.LENGTH_SHORT, true).show();
+            }
+        }else{
+            //MASUKKAN PIN
+            if (!getSharedPrefPin().equals(getSharedPref())){
+                Toasty.info(this, "Masukkan Pin!", Toast.LENGTH_SHORT, true).show();
+                Toasty.warning(this, "Device diganti!", Toast.LENGTH_SHORT, true).show();
+            }else {
+                Toasty.info(this, "Masukkan Pin!", Toast.LENGTH_SHORT, true).show();
+            }
         }
     }
 
@@ -180,27 +204,48 @@ public class PinActivity extends AppCompatActivity implements View.OnClickListen
     }
 
     private String getSharedPref(){
-        SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        SharedPreferences prefs = getSharedPreferences(PREFS_PIN, MODE_PRIVATE);
         return prefs.getString("pin", null);
     }
 
     private void setSharedPref(String pin){
+        SharedPreferences.Editor editor = getSharedPreferences(PREFS_PIN, MODE_PRIVATE).edit();
+        editor.putString("pin", pin);
+        editor.apply();
+    }
+
+    private String getSharedPrefPin(){
+        SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        return prefs.getString("pin", null);
+    }
+
+    private void setSharedPrefPin(String pin){
         SharedPreferences.Editor editor = getSharedPreferences(PREFS_NAME, MODE_PRIVATE).edit();
         editor.putString("pin", pin);
         editor.apply();
     }
 
+    private String getSharedPrefNik(){
+        SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        return prefs.getString("nik", null);
+    }
+
     private void send(){
         String pin = pinArray[0] + pinArray[1] + pinArray[2] + pinArray[3] + pinArray[4] + pinArray[5];
 
-        if (getSharedPref() == null){
+        if (getSharedPrefPin() == null){
             // TODO: set pin masuk ke database
-            setSharedPref(pin);
-            Toasty.success(this, "Pin Berhasil Dibuat!", Toast.LENGTH_SHORT, true).show();
             Intent restartIntent = new Intent(PinActivity.this, PinActivity.class);
             restartIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(restartIntent);
-        }else if (getSharedPref().equals(pin)){
+            setPin(getSharedPrefNik(), pin, restartIntent);
+            setSharedPrefPin(pin);
+            setSharedPref(pin);
+        }else if (getSharedPrefPin().equals(pin) || getSharedPref().equals(pin)){
+            if (getSharedPref() == null){
+                Toasty.warning(this, "Device di set!", Toast.LENGTH_SHORT, true).show();
+                setSharedPrefPin(pin);
+                setSharedPref(pin);
+            }
             Intent intent = new Intent(PinActivity.this, MainActivity.class);
             Toasty.success(this, "Berhasil!", Toast.LENGTH_SHORT, true).show();
             startActivity(intent);
@@ -208,5 +253,45 @@ public class PinActivity extends AppCompatActivity implements View.OnClickListen
             Toasty.info(this, "Pin salah!", Toast.LENGTH_SHORT, true).show();
         }
 
+    }
+
+    private void setPin(String nik, String pin, Intent intent){
+        HashMap<String, String> params = new HashMap<>();
+        params.put("nik", nik);
+        params.put("pin", pin);
+
+        progress_dialog = new ProgressDialog(PinActivity.this);
+        progress_dialog.setMessage("Harap tunggu...");
+        progress_dialog.setCancelable(false);
+        progress_dialog.show();
+
+        Call<AuthModel> result = AttendanceApi.getAPIService().pin(params);
+        result.enqueue(new Callback<AuthModel>() {
+            @Override
+            public void onResponse(Call<AuthModel> call, retrofit2.Response<AuthModel> response) {
+                progress_dialog.dismiss();
+                try {
+                    if(response.body()!=null) {
+                        Karyawan karyawan = response.body().getKaryawan();
+                        if (karyawan.getPin().equals(pin)){
+                            Toasty.success(PinActivity.this, "Pin Berhasil Dibuat!", Toast.LENGTH_SHORT, true).show();
+                            startActivity(intent);
+                        }
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                    Toast.makeText(PinActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<AuthModel> call, Throwable t) {
+                progress_dialog.dismiss();
+                t.printStackTrace();
+                if (t.getMessage().equals("timeout")){
+                    Toasty.error(PinActivity.this, "Database Attendance timeout, coba lagi!", Toast.LENGTH_SHORT, true).show();
+                }
+            }
+        });
     }
 }

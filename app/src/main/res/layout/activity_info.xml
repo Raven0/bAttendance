@@ -75,7 +75,7 @@
                         android:layout_height="wrap_content"
                         android:textColor="#fff"
                         android:textSize="16sp"
-                        android:text=": 1601003"/>
+                        android:text="-"/>
 
                 </LinearLayout>
 
@@ -98,7 +98,7 @@
                         android:layout_height="wrap_content"
                         android:textColor="#fff"
                         android:textSize="16sp"
-                        android:text=": Dede Heri"/>
+                        android:text="-"/>
 
                 </LinearLayout>
 
@@ -121,7 +121,7 @@
                         android:layout_height="wrap_content"
                         android:textColor="#fff"
                         android:textSize="16sp"
-                        android:text=": Graphic Design"/>
+                        android:text="-"/>
 
                 </LinearLayout>
 

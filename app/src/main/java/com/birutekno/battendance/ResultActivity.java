@@ -60,7 +60,6 @@ public class ResultActivity extends AppCompatActivity {
 
     private void checkPermission(){
         int PERMISSION_ALL = 1;
-//        String[] PERMISSIONS = {android.Manifest.permission.READ_CONTACTS, android.Manifest.permission.WRITE_CONTACTS, android.Manifest.permission.WRITE_EXTERNAL_STORAGE, android.Manifest.permission.READ_SMS, android.Manifest.permission.CAMERA};
         String[] PERMISSIONS = {android.Manifest.permission.CAMERA};
 
         if (ContextCompat.checkSelfPermission(ResultActivity.this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED){
