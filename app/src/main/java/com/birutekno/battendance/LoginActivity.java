@@ -87,10 +87,11 @@ public class LoginActivity extends AppCompatActivity {
                         String status = responses.getMessage();
                         if (status.equals("success")) {
                             Karyawan karyawan = response.body().getKaryawan();
+                            String id = karyawan.getId();
                             String nik = karyawan.getNik();
                             String pin = karyawan.getPin();
                             String stat = karyawan.getStatus();
-                            setSharedPref(nik,pin,stat);
+                            setSharedPref(id,nik,pin,stat);
                             startActivity(intent);
                         }else if(status.equals("unauthorized")){
                             Toasty.info(LoginActivity.this, "Akun Anda belum di Verifikasi, Silahkan Registrasi", Toast.LENGTH_SHORT,true).show();
@@ -115,8 +116,9 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    private void setSharedPref(String nik, String pin, String status){
+    private void setSharedPref(String id, String nik, String pin, String status){
         SharedPreferences.Editor editor = getSharedPreferences(PREFS_NAME, MODE_PRIVATE).edit();
+        editor.putString("id", id);
         editor.putString("nik", nik);
         editor.putString("pin", pin);
         editor.putString("status", status);

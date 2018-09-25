@@ -9,7 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.birutekno.battendance.R;
-import com.birutekno.battendance.model.History;
+import com.birutekno.battendance.model.Data;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -20,10 +20,10 @@ import java.util.ArrayList;
 
 public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHolder>{
 
-    public ArrayList<History> data;
+    public ArrayList<Data> data;
     Context context;
 
-    public HistoryAdapter(ArrayList<History> data, Context context) {
+    public HistoryAdapter(ArrayList<Data> data, Context context) {
         this.data = data;
         this.context = context;
     }
@@ -40,7 +40,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
 //        Toast.makeText(context, data.get(i).getNama(), Toast.LENGTH_SHORT).show();
         viewHolder.nama.setText(data.get(i).getNama());
         viewHolder.jam.setText(data.get(i).getJam());
-        if (data.get(i).getAction().equals("IN")){
+        if (data.get(i).getAction().equals("masuk")){
             viewHolder.action.setText(viewHolder.text_masuk);
             viewHolder.tanggal.setVisibility(View.VISIBLE);
             viewHolder.tanggal.setText(checkDate(data.get(i).getTanggal()));

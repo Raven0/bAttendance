@@ -1,5 +1,6 @@
 package com.birutekno.battendance;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -9,17 +10,25 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.birutekno.battendance.helper.AttendanceApi;
+import com.birutekno.battendance.model.Response;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
 
 import es.dmoral.toasty.Toasty;
+import retrofit2.Call;
+import retrofit2.Callback;
 
 public class TfaActivity extends AppCompatActivity implements View.OnClickListener{
 
     String[] pinArray = new String[4];
     String pinCheck;
+    String verifikasi;
+    String absen;
 
     TextView tv_clock;
     TextView tv_one;
@@ -27,7 +36,7 @@ public class TfaActivity extends AppCompatActivity implements View.OnClickListen
     TextView tv_three;
     TextView tv_four;
 
-    Button btn_send;
+//    Button btn_send;
     Button btn_one;
     Button btn_two;
     Button btn_three;
@@ -41,6 +50,8 @@ public class TfaActivity extends AppCompatActivity implements View.OnClickListen
     Button btn_clear;
     Button btn_del;
 
+    ProgressDialog progress_dialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,7 +63,7 @@ public class TfaActivity extends AppCompatActivity implements View.OnClickListen
         tv_two = findViewById(R.id.tv_two);
         tv_three = findViewById(R.id.tv_three);
         tv_four = findViewById(R.id.tv_four);
-        btn_send = findViewById(R.id.btn_send);
+//        btn_send = findViewById(R.id.btn_send);
         btn_one = findViewById(R.id.btn_one );
         btn_two = findViewById(R.id.btn_two );
         btn_three = findViewById(R.id.btn_three );
@@ -69,12 +80,13 @@ public class TfaActivity extends AppCompatActivity implements View.OnClickListen
         //Variable Initialization
         clearPin();
         getBundle();
+        getBundleAbsen();
 
         //Realtime Clock function call
         realtimeClock(tv_clock);
 
         //Button set Pn Click Listener
-        btn_send.setOnClickListener(this);
+//        btn_send.setOnClickListener(this);
         btn_one.setOnClickListener(this);
         btn_two.setOnClickListener(this);
         btn_three.setOnClickListener(this);
@@ -116,8 +128,6 @@ public class TfaActivity extends AppCompatActivity implements View.OnClickListen
             clearPin();
         }else if (view == btn_del){
             delPin();
-        }else if (view == btn_send){
-            send();
         }
     }
 
@@ -127,6 +137,7 @@ public class TfaActivity extends AppCompatActivity implements View.OnClickListen
             try{
                 //{"id":"1","pin":"1809"}
                 JSONObject object = new JSONObject(extras.getString("result"));
+                verifikasi = object.getString("id");
                 pinCheck = object.getString("pin");
             }catch (JSONException e){
                 e.printStackTrace();
@@ -136,6 +147,21 @@ public class TfaActivity extends AppCompatActivity implements View.OnClickListen
             }
         }
     }
+
+    private void getBundleAbsen(){
+        Bundle extras = getIntent().getExtras();
+        if(extras != null) {
+            try{
+                absen = extras.getString("absen");
+            }catch (Exception e){
+                e.printStackTrace();
+                Toasty.error(this, "Gagal memparse data!", Toast.LENGTH_SHORT, true).show();
+                Intent intent = new Intent(TfaActivity.this, MainActivity.class);
+                startActivity(intent);
+            }
+        }
+    }
+
 
     private void realtimeClock(final TextView tv_clock){
         Thread t = new Thread() {
@@ -212,12 +238,94 @@ public class TfaActivity extends AppCompatActivity implements View.OnClickListen
         if (pinCheck.equals(pin)){
             //TODO : buat sistem untuk UPDATE status pin di tabel verifikasi
             //TODO : buat sistem untuk UPDATE verifikasi_id di tabel Absensi
-            Intent intent = new Intent(TfaActivity.this, MainActivity.class);
-            Toasty.success(this, "Berhasil!", Toast.LENGTH_SHORT, true).show();
-            startActivity(intent);
+            absensi();
         }else {
             Toasty.info(this, "Pin 2FA salah!", Toast.LENGTH_SHORT, true).show();
         }
 
+    }
+
+    private void absensi(){
+        HashMap<String, String> params = new HashMap<>();
+        params.put("verifikasi_id", verifikasi);
+
+        progress_dialog = new ProgressDialog(TfaActivity.this);
+        progress_dialog.setMessage("Harap tunggu...");
+        progress_dialog.setCancelable(false);
+        progress_dialog.show();
+
+        Call<Response> result = AttendanceApi.getAPIService().absensi(absen, params);
+        result.enqueue(new Callback<Response>() {
+            @Override
+            public void onResponse(Call<Response> call, retrofit2.Response<Response> response) {
+                progress_dialog.dismiss();
+                try {
+                    if(response.body()!=null) {
+                        Response responses = response.body();
+                        String status = responses.getMessage();
+                        if (status.equals("success")) {
+                            Intent intent = new Intent(TfaActivity.this, MainActivity.class);
+                            Toasty.success(TfaActivity.this, "Berhasil!", Toast.LENGTH_SHORT, true).show();
+                            setTrigger(verifikasi, "2", intent);
+                        }else if(status.equals("failed")){
+                            Toasty.warning(TfaActivity.this, "Anda sudah melakukan absen masuk!", Toast.LENGTH_SHORT,true).show();
+                        }
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                    Toast.makeText(TfaActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Response> call, Throwable t) {
+                progress_dialog.dismiss();
+                t.printStackTrace();
+                if (t.getMessage().equals("timeout")){
+                    Toasty.error(TfaActivity.this, "Database Attendance timeout, coba lagi!", Toast.LENGTH_SHORT, true).show();
+                }
+            }
+        });
+    }
+
+    private void setTrigger(String id, String trigger, Intent intent){
+        HashMap<String, String> params = new HashMap<>();
+        params.put("status", trigger);
+
+        progress_dialog = new ProgressDialog(TfaActivity.this);
+        progress_dialog.setMessage("Harap tunggu...");
+        progress_dialog.setCancelable(false);
+        progress_dialog.show();
+
+        Call<Response> result = AttendanceApi.getAPIService().trigger(id, params);
+        result.enqueue(new Callback<Response>() {
+            @Override
+            public void onResponse(Call<Response> call, retrofit2.Response<Response> response) {
+                progress_dialog.dismiss();
+                try {
+                    if(response.body()!=null) {
+                        Response responses = response.body();
+                        String status = responses.getMessage();
+                        if (status.equals("success")) {
+                            startActivity(intent);
+                        }else if(status.equals("failed")){
+                            Toasty.warning(TfaActivity.this, "Update trigger gagal", Toast.LENGTH_SHORT,true).show();
+                        }
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                    Toast.makeText(TfaActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Response> call, Throwable t) {
+                progress_dialog.dismiss();
+                t.printStackTrace();
+                if (t.getMessage().equals("timeout")){
+                    Toasty.error(TfaActivity.this, "Database Attendance timeout, coba lagi!", Toast.LENGTH_SHORT, true).show();
+                }
+            }
+        });
     }
 }

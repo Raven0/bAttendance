@@ -89,10 +89,11 @@ public class InfoActivity extends AppCompatActivity {
                         String status = responses.getMessage();
                         if (status.equals("success")) {
                             Karyawan karyawan = response.body().getKaryawan();
+                            String id = karyawan.getId();
                             String nik = karyawan.getNik();
                             String pin = karyawan.getPin();
                             String stat = karyawan.getStatus();
-                            setSharedPref(nik,pin,stat);
+                            setSharedPref(id,nik,pin,stat);
                             startActivity(intent);
                         }else if(status.equals("failed")){
                             Toasty.warning(InfoActivity.this, "Verifikasi Gagal, Hubungi HRD", Toast.LENGTH_SHORT,true).show();
@@ -115,8 +116,9 @@ public class InfoActivity extends AppCompatActivity {
         });
     }
 
-    private void setSharedPref(String nik, String pin, String status){
+    private void setSharedPref(String id, String nik, String pin, String status){
         SharedPreferences.Editor editor = getSharedPreferences(PREFS_NAME, MODE_PRIVATE).edit();
+        editor.putString("id", id);
         editor.putString("nik", nik);
         editor.putString("pin", pin);
         editor.putString("status", status);

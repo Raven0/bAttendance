@@ -1,25 +1,35 @@
 package com.birutekno.battendance;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import com.birutekno.battendance.adapter.HistoryAdapter;
-import com.birutekno.battendance.helper.HistoryResponse;
-import com.birutekno.battendance.model.History;
+import com.birutekno.battendance.helper.AttendanceApi;
+import com.birutekno.battendance.model.Data;
+import com.birutekno.battendance.model.DataHistory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+
+import es.dmoral.toasty.Toasty;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class HistoryActivity extends AppCompatActivity {
 
     Toolbar toolbar;
     RecyclerView recyclerView;
+    ProgressDialog progress_dialog;
 
-    private ArrayList<History> pojo;
+    private ArrayList<Data> pojo;
     private HistoryAdapter mAdapter;
 
     @Override
@@ -50,62 +60,37 @@ public class HistoryActivity extends AppCompatActivity {
     }
 
     private void loadJSON(){
-        //TODO: Buat sistem untuk menerima RESPONSE History
-        History[] data = new History[6];
-        data[0] = new History();
-        data[0].setId("1");
-        data[0].setId_karyawan("1");
-        data[0].setNama("Dede Heri");
-        data[0].setJam("07:43");
-        data[0].setTanggal("18-09-2018");
-        data[0].setAction("IN");
+        progress_dialog = new ProgressDialog(HistoryActivity.this);
+        progress_dialog.setMessage("Harap tunggu...");
+        progress_dialog.setCancelable(false);
+        progress_dialog.show();
 
-        data[1] = new History();
-        data[1].setId("2");
-        data[1].setId_karyawan("1");
-        data[1].setNama("Dede Heri");
-        data[1].setJam("17:40");
-        data[1].setTanggal("18-09-2018");
-        data[1].setAction("OUT");
+        Call<DataHistory> call = AttendanceApi.getAPIService().history();
+        call.enqueue(new Callback<DataHistory>() {
+            @Override
+            public void onResponse(Call<DataHistory> call, Response<DataHistory> response) {
+                progress_dialog.dismiss();
 
-        data[2] = new History();
-        data[2].setId("3");
-        data[2].setId_karyawan("1");
-        data[2].setNama("Dede Heri");
-        data[2].setJam("07:26");
-        data[2].setTanggal("17-09-2018");
-        data[2].setAction("IN");
+                if(response.isSuccessful()){
+                    DataHistory jsonResponse = response.body();
+                    pojo = new ArrayList<>(Arrays.asList(jsonResponse.getData()));
+                    mAdapter = new HistoryAdapter(pojo, getBaseContext());
+                    recyclerView.setAdapter(mAdapter);
+                }else {
+                    Log.d("ERROR CODE" , String.valueOf(response.code()));
+                    Log.d("ERROR BODY" , response.errorBody().toString());
 
-        data[3] = new History();
-        data[3].setId("4");
-        data[3].setId_karyawan("1");
-        data[3].setNama("Dede Heri");
-        data[3].setJam("17:21");
-        data[3].setTanggal("17-09-2018");
-        data[3].setAction("OUT");
+                }
+            }
 
-        data[4] = new History();
-        data[4].setId("5");
-        data[4].setId_karyawan("1");
-        data[4].setNama("Dede Heri");
-        data[4].setJam("08:03");
-        data[4].setTanggal("16-09-2018");
-        data[4].setAction("IN");
-
-        data[5] = new History();
-        data[5].setId("6");
-        data[5].setId_karyawan("1");
-        data[5].setNama("Dede Heri");
-        data[5].setJam("17:01");
-        data[5].setTanggal("16-09-2018");
-        data[5].setAction("OUT");
-
-        HistoryResponse historyResponse = new HistoryResponse();
-        historyResponse.setData(data);
-        pojo = new ArrayList<>(Arrays.asList(historyResponse.getData()));
-
-//        Toast.makeText(this, pojo.toString(), Toast.LENGTH_SHORT).show();
-        mAdapter = new HistoryAdapter(pojo, getBaseContext());
-        recyclerView.setAdapter(mAdapter);
+            @Override
+            public void onFailure(Call<DataHistory> call, Throwable t) {
+                progress_dialog.dismiss();
+                t.printStackTrace();
+                if (t.getMessage().equals("timeout")){
+                    Toasty.error(HistoryActivity.this, "Database Attendance timeout, coba lagi!", Toast.LENGTH_SHORT, true).show();
+                }
+            }
+        });
     }
 }

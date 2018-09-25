@@ -2,8 +2,10 @@ package com.birutekno.battendance;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
@@ -16,14 +18,20 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.birutekno.battendance.helper.AttendanceApi;
+import com.birutekno.battendance.model.Response;
 import com.yarolegovich.lovelydialog.LovelyTextInputDialog;
 
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
 
 import es.dmoral.toasty.Toasty;
+import retrofit2.Call;
+import retrofit2.Callback;
 
 public class MainActivity extends AppCompatActivity {
 
+    public static final String PREFS_NAME = "AUTH";
     // TODO: buat gradien instagram untuk header
     LinearLayout layoutHeader;
     TextView tv_clock;
@@ -33,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
     ImageView card_pulang;
     ImageView card_lembur;
     Button btn_logout;
+    ProgressDialog progress_dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
                 int startPulangClock = 5;
                 String pm = pmFormat.format(date);
                 if (currentClock == startPulangClock && pm.equals("PM")) {
-                    Toasty.success(MainActivity.this, "Success!", Toast.LENGTH_SHORT, true).show();
+                    pulang();
                 }else {
                     formPulang(savedInstanceState);
                 }
@@ -135,16 +144,183 @@ public class MainActivity extends AppCompatActivity {
         t.start();
     }
 
+    private String getSharedPrefId(){
+        SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        return prefs.getString("id", null);
+    }
+
     private void history(){
         Intent intent = new Intent(MainActivity.this, HistoryActivity.class);
         startActivity(intent);
     }
 
     private void absen(){
-        // TODO: Buat validasi absensi (Hanya bisa 1x dalam 1 hari)
-        // TODO: Buat sistem untuk menambah data baru di tabel Absen
-        Intent intent = new Intent(MainActivity.this, ScanActivity.class);
-        startActivity(intent);
+        HashMap<String, String> params = new HashMap<>();
+        params.put("karyawan_id", getSharedPrefId());
+
+        progress_dialog = new ProgressDialog(MainActivity.this);
+        progress_dialog.setMessage("Harap tunggu...");
+        progress_dialog.setCancelable(false);
+        progress_dialog.show();
+
+        Call<Response> result = AttendanceApi.getAPIService().masuk(params);
+        result.enqueue(new Callback<Response>() {
+            @Override
+            public void onResponse(Call<Response> call, retrofit2.Response<Response> response) {
+                progress_dialog.dismiss();
+                try {
+                    if(response.body()!=null) {
+                        Response responses = response.body();
+                        String status = responses.getMessage();
+                        if (status.equals("success")) {
+                            Intent intent = new Intent(MainActivity.this, ScanActivity.class);
+                            intent.putExtra("absen", responses.getId());
+                            startActivity(intent);
+                        }else if(status.equals("failed")){
+                            Toasty.warning(MainActivity.this, "Anda sudah melakukan absen masuk!", Toast.LENGTH_SHORT,true).show();
+                        }
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                    Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Response> call, Throwable t) {
+                progress_dialog.dismiss();
+                t.printStackTrace();
+                if (t.getMessage().equals("timeout")){
+                    Toasty.error(MainActivity.this, "Database Attendance timeout, coba lagi!", Toast.LENGTH_SHORT, true).show();
+                }
+            }
+        });
+    }
+
+    private void pulang(){
+        HashMap<String, String> params = new HashMap<>();
+        params.put("karyawan_id", getSharedPrefId());
+
+        progress_dialog = new ProgressDialog(MainActivity.this);
+        progress_dialog.setMessage("Harap tunggu...");
+        progress_dialog.setCancelable(false);
+        progress_dialog.show();
+
+        Call<Response> result = AttendanceApi.getAPIService().pulang(params);
+        result.enqueue(new Callback<Response>() {
+            @Override
+            public void onResponse(Call<Response> call, retrofit2.Response<Response> response) {
+                progress_dialog.dismiss();
+                try {
+                    if(response.body()!=null) {
+                        Response responses = response.body();
+                        String status = responses.getMessage();
+                        if (status.equals("success")) {
+                            Toasty.success(MainActivity.this, "Absensi berhasil dilakukan!", Toast.LENGTH_SHORT,true).show();
+                        }else if(status.equals("failed")){
+                            Toasty.warning(MainActivity.this, "Anda sudah melakukan absen pulang!", Toast.LENGTH_SHORT,true).show();
+                        }
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                    Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Response> call, Throwable t) {
+                progress_dialog.dismiss();
+                t.printStackTrace();
+                if (t.getMessage().equals("timeout")){
+                    Toasty.error(MainActivity.this, "Database Attendance timeout, coba lagi!", Toast.LENGTH_SHORT, true).show();
+                }
+            }
+        });
+    }
+
+    private void mabal(String alasan){
+        HashMap<String, String> params = new HashMap<>();
+        params.put("karyawan_id", getSharedPrefId());
+        params.put("alasan", alasan);
+
+        progress_dialog = new ProgressDialog(MainActivity.this);
+        progress_dialog.setMessage("Harap tunggu...");
+        progress_dialog.setCancelable(false);
+        progress_dialog.show();
+
+        Call<Response> result = AttendanceApi.getAPIService().mabal(params);
+        result.enqueue(new Callback<Response>() {
+            @Override
+            public void onResponse(Call<Response> call, retrofit2.Response<Response> response) {
+                progress_dialog.dismiss();
+                try {
+                    if(response.body()!=null) {
+                        Response responses = response.body();
+                        String status = responses.getMessage();
+                        if (status.equals("success")) {
+                            Toasty.success(MainActivity.this, "Absensi berhasil dilakukan!", Toast.LENGTH_SHORT,true).show();
+                        }else if(status.equals("failed")){
+                            Toasty.warning(MainActivity.this, "Anda sudah melakukan absen pulang!", Toast.LENGTH_SHORT,true).show();
+                        }
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                    Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Response> call, Throwable t) {
+                progress_dialog.dismiss();
+                t.printStackTrace();
+                if (t.getMessage().equals("timeout")){
+                    Toasty.error(MainActivity.this, "Database Attendance timeout, coba lagi!", Toast.LENGTH_SHORT, true).show();
+                }
+            }
+        });
+    }
+
+    private void lembur(String alasan, String durasi){
+        HashMap<String, String> params = new HashMap<>();
+        params.put("karyawan_id", getSharedPrefId());
+        params.put("alasan", alasan);
+        params.put("durasi", durasi);
+
+        progress_dialog = new ProgressDialog(MainActivity.this);
+        progress_dialog.setMessage("Harap tunggu...");
+        progress_dialog.setCancelable(false);
+        progress_dialog.show();
+
+        Call<Response> result = AttendanceApi.getAPIService().lembur(params);
+        result.enqueue(new Callback<Response>() {
+            @Override
+            public void onResponse(Call<Response> call, retrofit2.Response<Response> response) {
+                progress_dialog.dismiss();
+                try {
+                    if(response.body()!=null) {
+                        Response responses = response.body();
+                        String status = responses.getMessage();
+                        if (status.equals("success")) {
+                            Toasty.success(MainActivity.this, "Absensi berhasil dilakukan!", Toast.LENGTH_SHORT,true).show();
+                        }else if(status.equals("failed")){
+                            Toasty.warning(MainActivity.this, "Anda sudah melakukan absen pulang!", Toast.LENGTH_SHORT,true).show();
+                        }
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                    Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Response> call, Throwable t) {
+                progress_dialog.dismiss();
+                t.printStackTrace();
+                if (t.getMessage().equals("timeout")){
+                    Toasty.error(MainActivity.this, "Database Attendance timeout, coba lagi!", Toast.LENGTH_SHORT, true).show();
+                }
+            }
+        });
     }
 
     private void checkPermission(){
@@ -165,11 +341,7 @@ public class MainActivity extends AppCompatActivity {
                 .setMessage("Masukkan alasan anda")
                 .setHint("Contoh : izin ke bank")
                 .setIcon(R.drawable.ic_assignment_white_36dp)
-                .setConfirmButton(android.R.string.ok, text ->
-                        Toast.makeText(
-                                MainActivity.this, text,
-                                Toast.LENGTH_SHORT)
-                                .show())
+                .setConfirmButton(android.R.string.ok, text -> mabal(text))
                 .setNegativeButton(android.R.string.no, null)
                 .setSavedInstanceState(savedInstanceState)
                 .configureEditText(editText -> editText.setMaxLines(1))
@@ -190,11 +362,7 @@ public class MainActivity extends AppCompatActivity {
                         return text.matches("\\w+");
                     }
                 })
-                .setConfirmButton(android.R.string.ok, text ->
-                        Toast.makeText(
-                                MainActivity.this, text,
-                                Toast.LENGTH_SHORT)
-                                .show())
+                .setConfirmButton(android.R.string.ok, text -> lembur(text,text))
                 .setNegativeButton(android.R.string.no, null)
                 .setSavedInstanceState(savedInstanceState)
                 .configureEditText(editText -> editText.setMaxLines(1))

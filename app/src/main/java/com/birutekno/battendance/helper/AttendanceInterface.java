@@ -1,13 +1,18 @@
 package com.birutekno.battendance.helper;
 
 import com.birutekno.battendance.model.AuthModel;
+import com.birutekno.battendance.model.DataHistory;
+import com.birutekno.battendance.model.Response;
 
 import java.util.HashMap;
 
 import retrofit2.Call;
 import retrofit2.http.FieldMap;
 import retrofit2.http.FormUrlEncoded;
+import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
+import retrofit2.http.Path;
 
 public interface AttendanceInterface {
     //LOGIN API
@@ -30,7 +35,34 @@ public interface AttendanceInterface {
     Call<AuthModel> pin(@FieldMap HashMap<String, String> params);
 
     //ABSEN MASUK API
+    @FormUrlEncoded
+    @POST("masuk")
+    Call<Response> masuk(@FieldMap HashMap<String, String> params);
+
+    @FormUrlEncoded
+    @PUT("absen/{id}/edit")
+    Call<Response> absensi(@Path("id") String id, @FieldMap HashMap<String, String> params);
+
+    @FormUrlEncoded
+    @PUT("verifikasi/{id}/edit")
+    Call<Response> trigger(@Path("id") String id, @FieldMap HashMap<String, String> params);
+
     //ABSEN PULANG API
+    @FormUrlEncoded
+    @POST("keluar")
+    Call<Response> pulang(@FieldMap HashMap<String, String> params);
+
+    @FormUrlEncoded
+    @POST("mabal")
+    Call<Response> mabal(@FieldMap HashMap<String, String> params);
+
     //LEMBUR API
+    @FormUrlEncoded
+    @POST("lembur")
+    Call<Response> lembur(@FieldMap HashMap<String, String> params);
+//    Call<ResponseBody> editJamaah(@Path("id") String id, @FieldMap HashMap<String, String> params);
+
     //DATA HISTORY
+    @GET("history")
+    Call<DataHistory> history();
 }
