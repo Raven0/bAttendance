@@ -23,7 +23,7 @@
                                           <PersistentState>
                                             <option name="values">
                                               <map>
-                                                <entry key="scalingPercent" value="70" />
+                                                <entry key="scalingPercent" value="60" />
                                               </map>
                                             </option>
                                           </PersistentState>
@@ -36,7 +36,7 @@
                                       <entry key="backgroundAssetType" value="COLOR" />
                                       <entry key="backgroundColor" value="0f70b7" />
                                       <entry key="backgroundLayerName" value="ic_launcher_background" />
-                                      <entry key="foregroundImage" value="X:\PROJECT\Android\AndroidStudio\bAttendance\asset\Asset\Mobile\icon_battendance.png" />
+                                      <entry key="foregroundImage" value="X:\PROJECT\Android\AndroidStudio\bAttendance\asset\Asset\Mobile\logo_attendance.png" />
                                       <entry key="foregroundLayerName" value="ic_launcher_foreground" />
                                       <entry key="outputName" value="ic_launcher_new" />
                                     </map>

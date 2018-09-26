@@ -100,9 +100,9 @@ public class MainActivity extends AppCompatActivity {
                 SimpleDateFormat clockFormat = new SimpleDateFormat("h");
                 SimpleDateFormat pmFormat = new SimpleDateFormat("a");
                 int currentClock = Integer.parseInt(clockFormat.format(date));
-                int startLemburClock = 5;
+                int startLemburClock = 9;
                 String pm = pmFormat.format(date);
-                if (currentClock >= startLemburClock && pm.equals("PM")) {
+                if (currentClock >= startLemburClock && pm.equals("AM")) {
                     formLembur(savedInstanceState);
                 }else {
                     Toasty.info(MainActivity.this, "Waktu lembur belum dimulai", Toast.LENGTH_SHORT, true).show();
@@ -301,9 +301,9 @@ public class MainActivity extends AppCompatActivity {
                         Response responses = response.body();
                         String status = responses.getMessage();
                         if (status.equals("success")) {
-                            Toasty.success(MainActivity.this, "Absensi berhasil dilakukan!", Toast.LENGTH_SHORT,true).show();
+                            Toasty.success(MainActivity.this, "Anda tercatat Lembur " + durasi + " Jam", Toast.LENGTH_SHORT,true).show();
                         }else if(status.equals("failed")){
-                            Toasty.warning(MainActivity.this, "Anda sudah melakukan absen pulang!", Toast.LENGTH_SHORT,true).show();
+                            Toasty.warning(MainActivity.this, "Anda sudah tercatat Lembur hari ini!", Toast.LENGTH_SHORT,true).show();
                         }
                     }
                 }catch (Exception e){
