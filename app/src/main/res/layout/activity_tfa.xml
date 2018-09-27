@@ -117,18 +117,18 @@
 
         </LinearLayout>
 
-        <Button
-            android:id="@+id/btn_send"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:paddingLeft="30dp"
-            android:paddingRight="30dp"
-            android:drawableStart="@drawable/drawable_send_rotate"
-            android:backgroundTint="@color/colorPrimary"
-            android:textAllCaps="false"
-            android:text="Kirim"
-            android:textColor="#fff"/>
+        <!--<Button-->
+            <!--android:id="@+id/btn_send"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginTop="20dp"-->
+            <!--android:paddingLeft="30dp"-->
+            <!--android:paddingRight="30dp"-->
+            <!--android:drawableStart="@drawable/drawable_send_rotate"-->
+            <!--android:backgroundTint="@color/colorPrimary"-->
+            <!--android:textAllCaps="false"-->
+            <!--android:text="Kirim"-->
+            <!--android:textColor="#fff"/>-->
 
     </LinearLayout>
 

@@ -100,9 +100,9 @@ public class MainActivity extends AppCompatActivity {
                 SimpleDateFormat clockFormat = new SimpleDateFormat("h");
                 SimpleDateFormat pmFormat = new SimpleDateFormat("a");
                 int currentClock = Integer.parseInt(clockFormat.format(date));
-                int startLemburClock = 9;
+                int startLemburClock = 5;
                 String pm = pmFormat.format(date);
-                if (currentClock >= startLemburClock && pm.equals("AM")) {
+                if (currentClock >= startLemburClock && pm.equals("PM")) {
                     formLembur(savedInstanceState);
                 }else {
                     Toasty.info(MainActivity.this, "Waktu lembur belum dimulai", Toast.LENGTH_SHORT, true).show();
@@ -332,9 +332,14 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void sendLembur(String args){
+        String[] strings = args.split(",");
+        String durasi = strings[0];
+        String alasan = strings[1];
+        lembur(alasan,durasi);
+    }
+
     private void formPulang(Bundle savedInstanceState) {
-        // TODO: Buat validasi absensi (Hanya bisa 1x dalam 1 hari)
-        // TODO: Buat sistem untuk menambah data baru di tabel Absen
         new LovelyTextInputDialog(this, R.style.EditTextTintTheme)
                 .setTopColorRes(R.color.colorPrimary)
                 .setTitle("Form Pulang")
@@ -349,20 +354,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void formLembur(Bundle savedInstanceState) {
-        // TODO: Buat sistem untuk menambah data baru di tabel Lembur
         new LovelyTextInputDialog(this, R.style.EditTextTintTheme)
                 .setTopColorRes(R.color.colorPrimary)
                 .setTitle("Form Lembur")
-                .setMessage("Isi durasi lembur anda")
-                .setHint("Contoh : 3")
+                .setMessage("Isi durasi (jam) lembur anda dan alasan lembur")
+                .setHint("Contoh : 3, Kejar deadline besok pagi")
                 .setIcon(R.drawable.ic_assignment_white_36dp)
-                .setInputFilter("Masukkan jumlah jam saja, contoh 2", new LovelyTextInputDialog.TextFilter() {
+                .setInputFilter("Masukkan seperti di contoh", new LovelyTextInputDialog.TextFilter() {
                     @Override
                     public boolean check(String text) {
-                        return text.matches("\\w+");
+                        return text.matches("\\d,.*");
                     }
                 })
-                .setConfirmButton(android.R.string.ok, text -> lembur(text,text))
+                .setConfirmButton(android.R.string.ok, text -> sendLembur(text))
                 .setNegativeButton(android.R.string.no, null)
                 .setSavedInstanceState(savedInstanceState)
                 .configureEditText(editText -> editText.setMaxLines(1))

@@ -43,7 +43,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
         if (data.get(i).getAction().equals("masuk")){
             viewHolder.action.setText(viewHolder.text_masuk);
             viewHolder.tanggal.setVisibility(View.VISIBLE);
-            viewHolder.tanggal.setText(checkDate(data.get(i).getTanggal()));
+            viewHolder.tanggal.setText(data.get(i).getTanggal());
         }else {
             viewHolder.action.setText(viewHolder.text_pulang);
             viewHolder.tanggal.setVisibility(View.GONE);

@@ -61,8 +61,6 @@ public class InfoActivity extends AppCompatActivity {
     }
 
     private void login(TextView tv_nik){
-        // TODO: pake sistem LOGIN
-        // TODO: masukkan RESPONSE ke SharedPreference
         String nik = tv_nik.getText().toString().trim();
         Intent intent = new Intent(InfoActivity.this, PinActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

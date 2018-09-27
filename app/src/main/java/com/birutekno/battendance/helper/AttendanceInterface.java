@@ -7,6 +7,7 @@ import com.birutekno.battendance.model.Response;
 import java.util.HashMap;
 
 import retrofit2.Call;
+import retrofit2.http.DELETE;
 import retrofit2.http.FieldMap;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
@@ -39,9 +40,12 @@ public interface AttendanceInterface {
     @POST("masuk")
     Call<Response> masuk(@FieldMap HashMap<String, String> params);
 
+    @DELETE("absen/{id}/delete")
+    Call<Response> cancelAbsensi(@Path("id") String id);
+
     @FormUrlEncoded
     @PUT("absen/{id}/edit")
-    Call<Response> absensi(@Path("id") String id, @FieldMap HashMap<String, String> params);
+    Call<Response> editAbsensi(@Path("id") String id, @FieldMap HashMap<String, String> params);
 
     @FormUrlEncoded
     @PUT("verifikasi/{id}/edit")
@@ -60,7 +64,6 @@ public interface AttendanceInterface {
     @FormUrlEncoded
     @POST("lembur")
     Call<Response> lembur(@FieldMap HashMap<String, String> params);
-//    Call<ResponseBody> editJamaah(@Path("id") String id, @FieldMap HashMap<String, String> params);
 
     //DATA HISTORY
     @GET("history")

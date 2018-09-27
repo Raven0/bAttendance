@@ -92,7 +92,6 @@ public class PinActivity extends AppCompatActivity implements View.OnClickListen
         btn_clear.setOnClickListener(this);
         btn_del.setOnClickListener(this);
 
-        // TODO : Panggil data pin karyawan dari database untuk mendeteksi perubahan device
         if (getSharedPrefPin() == null){
             //BUAT PIN
             if (getSharedPref() != null){
@@ -234,7 +233,6 @@ public class PinActivity extends AppCompatActivity implements View.OnClickListen
         String pin = pinArray[0] + pinArray[1] + pinArray[2] + pinArray[3] + pinArray[4] + pinArray[5];
 
         if (getSharedPrefPin() == null){
-            // TODO: set pin masuk ke database
             Intent restartIntent = new Intent(PinActivity.this, PinActivity.class);
             restartIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             setPin(getSharedPrefNik(), pin, restartIntent);

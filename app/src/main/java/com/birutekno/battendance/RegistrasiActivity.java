@@ -52,7 +52,6 @@ public class RegistrasiActivity extends AppCompatActivity {
     }
 
     private void registrasi(EditText et_nik){
-        // TODO: buat sistem registrasi parameter NIK dengan RESPONSE ID/NIK karyawan, NAMA, dan DIVISI
         String nik = et_nik.getText().toString().trim();
         Intent intent = new Intent(RegistrasiActivity.this, InfoActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

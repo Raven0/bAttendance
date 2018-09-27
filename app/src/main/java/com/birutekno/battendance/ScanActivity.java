@@ -63,7 +63,6 @@ public class ScanActivity extends AppCompatActivity {
                 ScanActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        //TODO : buat sistem untuk UPDATE status qrCode di tabel verifikasi
                         Intent intent = new Intent(ScanActivity.this, TfaActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -169,5 +168,49 @@ public class ScanActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private void cancelAbsen(){
+        progress_dialog = new ProgressDialog(ScanActivity.this);
+        progress_dialog.setMessage("Harap tunggu...");
+        progress_dialog.setCancelable(false);
+        progress_dialog.show();
+
+        Call<Response> result = AttendanceApi.getAPIService().cancelAbsensi(absen);
+        result.enqueue(new Callback<Response>() {
+            @Override
+            public void onResponse(Call<Response> call, retrofit2.Response<Response> response) {
+                progress_dialog.dismiss();
+                try {
+                    if(response.body()!=null) {
+                        Response responses = response.body();
+                        String status = responses.getMessage();
+                        if (status.equals("success")) {
+                            ScanActivity.super.onBackPressed();
+                            Toasty.info(ScanActivity.this, "Absensi dibatalkan!", Toast.LENGTH_SHORT,true).show();
+                        }else if(status.equals("failed")){
+                            Toasty.warning(ScanActivity.this, "Absensi tidak bisa dibatalkan!", Toast.LENGTH_SHORT,true).show();
+                        }
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                    Toast.makeText(ScanActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Response> call, Throwable t) {
+                progress_dialog.dismiss();
+                t.printStackTrace();
+                if (t.getMessage().equals("timeout")){
+                    Toasty.error(ScanActivity.this, "Database Attendance timeout, coba lagi!", Toast.LENGTH_SHORT, true).show();
+                }
+            }
+        });
+    }
+
+    @Override
+    public void onBackPressed() {
+        cancelAbsen();
     }
 }
