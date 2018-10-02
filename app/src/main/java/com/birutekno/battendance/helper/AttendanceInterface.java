@@ -1,7 +1,7 @@
 package com.birutekno.battendance.helper;
 
 import com.birutekno.battendance.model.AuthModel;
-import com.birutekno.battendance.model.DataHistory;
+import com.birutekno.battendance.model.HistoryModel;
 import com.birutekno.battendance.model.Response;
 
 import java.util.HashMap;
@@ -67,5 +67,8 @@ public interface AttendanceInterface {
 
     //DATA HISTORY
     @GET("history")
-    Call<DataHistory> history();
+    Call<HistoryModel> history();
+
+    @GET("myhistory/{id}/show")
+    Call<HistoryModel> myHistory(@Path("id") String id);
 }

@@ -112,6 +112,32 @@
 
         </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:textAlignment="center"
+                android:text="Lupa PIN Mobile? "
+                android:textSize="16sp"
+                android:textColor="#fff" />
+
+            <TextView
+                android:id="@+id/tv_reset"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:textAlignment="center"
+                android:text="@string/klik_disini"
+                android:textSize="16sp"
+                android:textColor="#fff" />
+
+        </LinearLayout>
+
     </LinearLayout>
 
     <LinearLayout

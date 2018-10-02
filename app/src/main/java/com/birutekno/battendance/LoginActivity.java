@@ -111,6 +111,8 @@ public class LoginActivity extends AppCompatActivity {
                 t.printStackTrace();
                 if (t.getMessage().equals("timeout")){
                     Toasty.error(LoginActivity.this, "Database Attendance timeout, coba lagi!", Toast.LENGTH_SHORT, true).show();
+                }else {
+                    Toasty.error(LoginActivity.this, "Server sedang dalam pemeliharaan!", Toast.LENGTH_SHORT, true).show();
                 }
             }
         });

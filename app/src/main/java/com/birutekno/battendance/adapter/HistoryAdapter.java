@@ -2,6 +2,7 @@ package com.birutekno.battendance.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,9 +10,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.birutekno.battendance.R;
-import com.birutekno.battendance.model.Data;
+import com.birutekno.battendance.model.DataHistory;
+import com.squareup.picasso.Picasso;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 /**
@@ -20,10 +21,10 @@ import java.util.ArrayList;
 
 public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHolder>{
 
-    public ArrayList<Data> data;
+    public ArrayList<DataHistory> data;
     Context context;
 
-    public HistoryAdapter(ArrayList<Data> data, Context context) {
+    public HistoryAdapter(ArrayList<DataHistory> data, Context context) {
         this.data = data;
         this.context = context;
     }
@@ -37,9 +38,14 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
     @Override
     public void onBindViewHolder(HistoryAdapter.ViewHolder viewHolder, int i) {
 
-//        Toast.makeText(context, data.get(i).getNama(), Toast.LENGTH_SHORT).show();
         viewHolder.nama.setText(data.get(i).getNama());
         viewHolder.jam.setText(data.get(i).getJam());
+        try {
+//            Picasso.get().load(data.get(i).getFoto()).fit().centerCrop().into(viewHolder.img_profile);
+            Picasso.with(context).load("http://pronksiapartments.ee/wp-content/uploads/2015/10/placeholder-face-big.png").fit().centerCrop().into(viewHolder.img_profile);
+        }catch (Exception ex){
+            Log.d("ERROR_MSG", "onBindViewHolder: " + ex.getMessage());
+        }
         if (data.get(i).getAction().equals("masuk")){
             viewHolder.action.setText(viewHolder.text_masuk);
             viewHolder.tanggal.setVisibility(View.VISIBLE);
@@ -54,20 +60,6 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
     @Override
     public int getItemCount() {
         return data.size();
-    }
-
-    private String checkDate(String date){
-        String dateResult;
-        long dateNow = System.currentTimeMillis();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
-        String dateStringNow = dateFormat.format(dateNow);
-        if (dateStringNow.equals(date)){
-            dateResult = "Hari Ini";
-        }else {
-            dateResult = date;
-        }
-
-        return dateResult;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{

@@ -9,6 +9,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.birutekno.battendance.helper.AttendanceApi;
@@ -27,6 +28,7 @@ public class PinActivity extends AppCompatActivity implements View.OnClickListen
     public static final String PREFS_NAME = "AUTH";
 
     String[] pinArray = new String[6];
+    boolean resetRequest = false;
 
     ImageView tv_one;
     ImageView tv_two;
@@ -34,6 +36,7 @@ public class PinActivity extends AppCompatActivity implements View.OnClickListen
     ImageView tv_four;
     ImageView tv_five;
     ImageView tv_six;
+    TextView tv_reset;
 
     Button btn_one;
     Button btn_two;
@@ -62,6 +65,7 @@ public class PinActivity extends AppCompatActivity implements View.OnClickListen
         tv_four = findViewById(R.id.tv_four);
         tv_five = findViewById(R.id.tv_five);
         tv_six = findViewById(R.id.tv_six);
+        tv_reset = findViewById(R.id.tv_reset);
         btn_one = findViewById(R.id.btn_one );
         btn_two = findViewById(R.id.btn_two );
         btn_three = findViewById(R.id.btn_three );
@@ -77,6 +81,7 @@ public class PinActivity extends AppCompatActivity implements View.OnClickListen
 
         //Variable Initialization
         clearPin();
+        getBundleReset();
 
         //Button set Pn Click Listener
         btn_one.setOnClickListener(this);
@@ -91,6 +96,7 @@ public class PinActivity extends AppCompatActivity implements View.OnClickListen
         btn_zero.setOnClickListener(this);
         btn_clear.setOnClickListener(this);
         btn_del.setOnClickListener(this);
+        tv_reset.setOnClickListener(this);
 
         if (getSharedPrefPin() == null){
             //BUAT PIN
@@ -134,10 +140,11 @@ public class PinActivity extends AppCompatActivity implements View.OnClickListen
         }else if (view == btn_zero){
             assignPin(0);
         }else if (view == btn_clear){
-            // TODO: buat action untuk lupa pin dengan klik tombol clear 5x
             clearPin();
         }else if (view == btn_del){
             delPin();
+        }else if(view == tv_reset){
+            sendResetRequest();
         }
     }
 
@@ -202,6 +209,20 @@ public class PinActivity extends AppCompatActivity implements View.OnClickListen
         }
     }
 
+    private void getBundleReset(){
+        Bundle extras = getIntent().getExtras();
+        if(extras != null) {
+            boolean validator = extras.getBoolean("reset", false);
+            if(validator) {
+                resetRequest = true;
+            }else {
+                resetRequest = false;
+            }
+        }else {
+            resetRequest = false;
+        }
+    }
+
     private String getSharedPref(){
         SharedPreferences prefs = getSharedPreferences(PREFS_PIN, MODE_PRIVATE);
         return prefs.getString("pin", null);
@@ -232,18 +253,34 @@ public class PinActivity extends AppCompatActivity implements View.OnClickListen
     private void send(){
         String pin = pinArray[0] + pinArray[1] + pinArray[2] + pinArray[3] + pinArray[4] + pinArray[5];
 
-        if (getSharedPrefPin() == null){
-            Intent restartIntent = new Intent(PinActivity.this, PinActivity.class);
-            restartIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        Intent restartIntent = new Intent(PinActivity.this, PinActivity.class);
+        restartIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+        if (resetRequest){
+            //Jika Mendapat Request Reset PIN
+            if (getSharedPrefPin() == null){
+                //Jika ternyata User belum memiliki PIN maka buat dulu
+                Toasty.info(this, "Buat PIN Terlebih dahulu!", Toast.LENGTH_SHORT, true).show();
+                startActivity(restartIntent);
+            }else {
+                setSharedPrefPin(pin);
+                setSharedPref(pin);
+                setPin(getSharedPrefNik(), pin, restartIntent);
+            }
+        }else if (getSharedPrefPin() == null){
+            //Jika User Belum memiliki PIN maka Buat baru
             setPin(getSharedPrefNik(), pin, restartIntent);
             setSharedPrefPin(pin);
             setSharedPref(pin);
-        }else if (getSharedPrefPin().equals(pin) || getSharedPref().equals(pin)){
+        }else if (getSharedPrefPin().equals(pin)){
+            //Jika User memasukkan pin dengan benar
             if (getSharedPref() == null){
+                //Jika di Hp tidak ada data PIN
                 Toasty.warning(this, "Device di set!", Toast.LENGTH_SHORT, true).show();
                 setSharedPrefPin(pin);
                 setSharedPref(pin);
             }
+            //Masuk Ke Main
             Intent intent = new Intent(PinActivity.this, MainActivity.class);
             Toasty.success(this, "Berhasil!", Toast.LENGTH_SHORT, true).show();
             startActivity(intent);
@@ -288,8 +325,16 @@ public class PinActivity extends AppCompatActivity implements View.OnClickListen
                 t.printStackTrace();
                 if (t.getMessage().equals("timeout")){
                     Toasty.error(PinActivity.this, "Database Attendance timeout, coba lagi!", Toast.LENGTH_SHORT, true).show();
+                }else {
+                    Toasty.error(PinActivity.this, "Server sedang dalam pemeliharaan!", Toast.LENGTH_SHORT, true).show();
                 }
             }
         });
+    }
+
+    private void sendResetRequest(){
+        Intent intent = new Intent(PinActivity.this, PinActivity.class);
+        intent.putExtra("reset", true);
+        startActivity(intent);
     }
 }

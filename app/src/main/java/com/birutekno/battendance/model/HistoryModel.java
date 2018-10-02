@@ -1,8 +1,7 @@
-package com.birutekno.battendance.helper;
+package com.birutekno.battendance.model;
 
-import com.birutekno.battendance.model.DataHistory;
+public class HistoryModel {
 
-public class HistoryResponse {
     private DataHistory[] data;
 
     public DataHistory[] getData ()
@@ -14,4 +13,5 @@ public class HistoryResponse {
     {
         this.data = data;
     }
+
 }

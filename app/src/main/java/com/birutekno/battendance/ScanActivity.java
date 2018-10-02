@@ -165,6 +165,8 @@ public class ScanActivity extends AppCompatActivity {
                 t.printStackTrace();
                 if (t.getMessage().equals("timeout")){
                     Toasty.error(ScanActivity.this, "Database Attendance timeout, coba lagi!", Toast.LENGTH_SHORT, true).show();
+                }else {
+                    Toasty.error(ScanActivity.this, "Server sedang dalam pemeliharaan!", Toast.LENGTH_SHORT, true).show();
                 }
             }
         });
@@ -204,6 +206,8 @@ public class ScanActivity extends AppCompatActivity {
                 t.printStackTrace();
                 if (t.getMessage().equals("timeout")){
                     Toasty.error(ScanActivity.this, "Database Attendance timeout, coba lagi!", Toast.LENGTH_SHORT, true).show();
+                }else {
+                    Toasty.error(ScanActivity.this, "Server sedang dalam pemeliharaan!", Toast.LENGTH_SHORT, true).show();
                 }
             }
         });

@@ -192,6 +192,8 @@ public class MainActivity extends AppCompatActivity {
                 t.printStackTrace();
                 if (t.getMessage().equals("timeout")){
                     Toasty.error(MainActivity.this, "Database Attendance timeout, coba lagi!", Toast.LENGTH_SHORT, true).show();
+                }else {
+                    Toasty.error(MainActivity.this, "Server sedang dalam pemeliharaan!", Toast.LENGTH_SHORT, true).show();
                 }
             }
         });
@@ -233,6 +235,8 @@ public class MainActivity extends AppCompatActivity {
                 t.printStackTrace();
                 if (t.getMessage().equals("timeout")){
                     Toasty.error(MainActivity.this, "Database Attendance timeout, coba lagi!", Toast.LENGTH_SHORT, true).show();
+                }else {
+                    Toasty.error(MainActivity.this, "Server sedang dalam pemeliharaan!", Toast.LENGTH_SHORT, true).show();
                 }
             }
         });
@@ -275,6 +279,8 @@ public class MainActivity extends AppCompatActivity {
                 t.printStackTrace();
                 if (t.getMessage().equals("timeout")){
                     Toasty.error(MainActivity.this, "Database Attendance timeout, coba lagi!", Toast.LENGTH_SHORT, true).show();
+                }else {
+                    Toasty.error(MainActivity.this, "Server sedang dalam pemeliharaan!", Toast.LENGTH_SHORT, true).show();
                 }
             }
         });
@@ -318,6 +324,8 @@ public class MainActivity extends AppCompatActivity {
                 t.printStackTrace();
                 if (t.getMessage().equals("timeout")){
                     Toasty.error(MainActivity.this, "Database Attendance timeout, coba lagi!", Toast.LENGTH_SHORT, true).show();
+                }else {
+                    Toasty.error(MainActivity.this, "Server sedang dalam pemeliharaan!", Toast.LENGTH_SHORT, true).show();
                 }
             }
         });

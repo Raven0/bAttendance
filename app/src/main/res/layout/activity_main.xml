@@ -42,7 +42,7 @@
                 android:layout_centerVertical="true"
                 android:layout_alignEnd="@id/toolbar"
                 android:layout_alignRight="@id/toolbar"
-                android:layout_margin="10dp"
+                android:layout_marginRight="15dp"
                 android:src="@drawable/icon_history"/>
 
         </RelativeLayout>

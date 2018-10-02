@@ -109,6 +109,8 @@ public class InfoActivity extends AppCompatActivity {
                 t.printStackTrace();
                 if (t.getMessage().equals("timeout")){
                     Toasty.error(InfoActivity.this, "Database Attendance timeout, coba lagi!", Toast.LENGTH_SHORT, true).show();
+                }else {
+                    Toasty.error(InfoActivity.this, "Server sedang dalam pemeliharaan!", Toast.LENGTH_SHORT, true).show();
                 }
             }
         });

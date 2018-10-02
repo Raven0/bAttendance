@@ -281,6 +281,8 @@ public class TfaActivity extends AppCompatActivity implements View.OnClickListen
                 t.printStackTrace();
                 if (t.getMessage().equals("timeout")){
                     Toasty.error(TfaActivity.this, "Database Attendance timeout, coba lagi!", Toast.LENGTH_SHORT, true).show();
+                }else {
+                    Toasty.error(TfaActivity.this, "Server sedang dalam pemeliharaan!", Toast.LENGTH_SHORT, true).show();
                 }
             }
         });
@@ -322,6 +324,8 @@ public class TfaActivity extends AppCompatActivity implements View.OnClickListen
                 t.printStackTrace();
                 if (t.getMessage().equals("timeout")){
                     Toasty.error(TfaActivity.this, "Database Attendance timeout, coba lagi!", Toast.LENGTH_SHORT, true).show();
+                }else {
+                    Toasty.error(TfaActivity.this, "Server sedang dalam pemeliharaan!", Toast.LENGTH_SHORT, true).show();
                 }
             }
         });
