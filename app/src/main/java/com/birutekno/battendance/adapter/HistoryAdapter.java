@@ -42,7 +42,8 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
         viewHolder.jam.setText(data.get(i).getJam());
         try {
 //            Picasso.get().load(data.get(i).getFoto()).fit().centerCrop().into(viewHolder.img_profile);
-            Picasso.with(context).load("http://pronksiapartments.ee/wp-content/uploads/2015/10/placeholder-face-big.png").fit().centerCrop().into(viewHolder.img_profile);
+//            Picasso.with(context).load("http://pronksiapartments.ee/wp-content/uploads/2015/10/placeholder-face-big.png").fit().centerCrop().into(viewHolder.img_profile);
+            Picasso.with(context).load(data.get(i).getFoto()).fit().centerCrop().into(viewHolder.img_profile);
         }catch (Exception ex){
             Log.d("ERROR_MSG", "onBindViewHolder: " + ex.getMessage());
         }

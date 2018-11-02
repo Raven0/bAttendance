@@ -51,16 +51,26 @@ public interface AttendanceInterface {
     @PUT("verifikasi/{id}/edit")
     Call<Response> trigger(@Path("id") String id, @FieldMap HashMap<String, String> params);
 
+    @FormUrlEncoded
+    @PUT("telat/{id}/alasan")
+    Call<Response> editTelat(@Path("id") String id, @FieldMap HashMap<String, String> params);
+
     //ABSEN PULANG API
+    @GET("pulang")
+    Call<Response> pulang();
+
     @FormUrlEncoded
     @POST("keluar")
-    Call<Response> pulang(@FieldMap HashMap<String, String> params);
+    Call<Response> keluar(@FieldMap HashMap<String, String> params);
 
     @FormUrlEncoded
     @POST("mabal")
     Call<Response> mabal(@FieldMap HashMap<String, String> params);
 
     //LEMBUR API
+    @GET("over")
+    Call<Response> over();
+
     @FormUrlEncoded
     @POST("lembur")
     Call<Response> lembur(@FieldMap HashMap<String, String> params);

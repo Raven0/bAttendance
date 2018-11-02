@@ -95,6 +95,7 @@ public class LoginActivity extends AppCompatActivity {
                             startActivity(intent);
                         }else if(status.equals("unauthorized")){
                             Toasty.info(LoginActivity.this, "Akun Anda belum di Verifikasi, Silahkan Registrasi", Toast.LENGTH_SHORT,true).show();
+                            startActivity(new Intent(LoginActivity.this, RegistrasiActivity.class));
                         }else if(status.equals("failed")){
                             Toasty.warning(LoginActivity.this, "NIK anda tidak terdaftar", Toast.LENGTH_SHORT,true).show();
                         }
@@ -110,7 +111,7 @@ public class LoginActivity extends AppCompatActivity {
                 progress_dialog.dismiss();
                 t.printStackTrace();
                 if (t.getMessage().equals("timeout")){
-                    Toasty.error(LoginActivity.this, "Database Attendance timeout, coba lagi!", Toast.LENGTH_SHORT, true).show();
+                    Toasty.error(LoginActivity.this, "Database Attendance timeout, hubungi staff IT!", Toast.LENGTH_SHORT, true).show();
                 }else {
                     Toasty.error(LoginActivity.this, "Server sedang dalam pemeliharaan!", Toast.LENGTH_SHORT, true).show();
                 }

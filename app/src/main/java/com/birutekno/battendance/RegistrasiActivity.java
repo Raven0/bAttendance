@@ -105,7 +105,7 @@ public class RegistrasiActivity extends AppCompatActivity {
                 progress_dialog.dismiss();
                 t.printStackTrace();
                 if (t.getMessage().equals("timeout")){
-                    Toasty.error(RegistrasiActivity.this, "Database Attendance timeout, coba lagi!", Toast.LENGTH_SHORT, true).show();
+                    Toasty.error(RegistrasiActivity.this, "Database Attendance timeout, hubungi staff IT!", Toast.LENGTH_SHORT, true).show();
                 }else {
                     Toasty.error(RegistrasiActivity.this, "Server sedang dalam pemeliharaan!", Toast.LENGTH_SHORT, true).show();
                 }

@@ -135,7 +135,6 @@ public class TfaActivity extends AppCompatActivity implements View.OnClickListen
         Bundle extras = getIntent().getExtras();
         if(extras != null) {
             try{
-                //{"id":"1","pin":"1809"}
                 JSONObject object = new JSONObject(extras.getString("result"));
                 verifikasi = object.getString("id");
                 pinCheck = object.getString("pin");
@@ -261,9 +260,16 @@ public class TfaActivity extends AppCompatActivity implements View.OnClickListen
                     if(response.body()!=null) {
                         Response responses = response.body();
                         String status = responses.getMessage();
+                        String message = responses.getText();
                         if (status.equals("success")) {
                             Intent intent = new Intent(TfaActivity.this, MainActivity.class);
-                            Toasty.success(TfaActivity.this, "Berhasil!", Toast.LENGTH_SHORT, true).show();
+                            Toasty.success(TfaActivity.this, message, Toast.LENGTH_LONG, true).show();
+                            setTrigger(verifikasi, "2", intent);
+                        }else if(status.equals("request")){
+                            Intent intent = new Intent(TfaActivity.this, MainActivity.class);
+                            intent.putExtra("request", true);
+                            intent.putExtra("requestid", absen);
+                            Toasty.warning(TfaActivity.this, message, Toast.LENGTH_LONG, true).show();
                             setTrigger(verifikasi, "2", intent);
                         }else if(status.equals("failed")){
                             Toasty.warning(TfaActivity.this, "Anda sudah melakukan absen masuk!", Toast.LENGTH_SHORT,true).show();
@@ -280,7 +286,7 @@ public class TfaActivity extends AppCompatActivity implements View.OnClickListen
                 progress_dialog.dismiss();
                 t.printStackTrace();
                 if (t.getMessage().equals("timeout")){
-                    Toasty.error(TfaActivity.this, "Database Attendance timeout, coba lagi!", Toast.LENGTH_SHORT, true).show();
+                    Toasty.error(TfaActivity.this, "Database Attendance timeout, hubungi staff IT!", Toast.LENGTH_SHORT, true).show();
                 }else {
                     Toasty.error(TfaActivity.this, "Server sedang dalam pemeliharaan!", Toast.LENGTH_SHORT, true).show();
                 }
@@ -323,7 +329,7 @@ public class TfaActivity extends AppCompatActivity implements View.OnClickListen
                 progress_dialog.dismiss();
                 t.printStackTrace();
                 if (t.getMessage().equals("timeout")){
-                    Toasty.error(TfaActivity.this, "Database Attendance timeout, coba lagi!", Toast.LENGTH_SHORT, true).show();
+                    Toasty.error(TfaActivity.this, "Database Attendance timeout, hubungi staff IT!", Toast.LENGTH_SHORT, true).show();
                 }else {
                     Toasty.error(TfaActivity.this, "Server sedang dalam pemeliharaan!", Toast.LENGTH_SHORT, true).show();
                 }

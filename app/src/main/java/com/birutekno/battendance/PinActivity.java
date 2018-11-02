@@ -324,7 +324,7 @@ public class PinActivity extends AppCompatActivity implements View.OnClickListen
                 progress_dialog.dismiss();
                 t.printStackTrace();
                 if (t.getMessage().equals("timeout")){
-                    Toasty.error(PinActivity.this, "Database Attendance timeout, coba lagi!", Toast.LENGTH_SHORT, true).show();
+                    Toasty.error(PinActivity.this, "Database Attendance timeout, hubungi staff IT!", Toast.LENGTH_SHORT, true).show();
                 }else {
                     Toasty.error(PinActivity.this, "Server sedang dalam pemeliharaan!", Toast.LENGTH_SHORT, true).show();
                 }

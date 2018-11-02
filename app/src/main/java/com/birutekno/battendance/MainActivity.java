@@ -32,6 +32,9 @@ import retrofit2.Callback;
 public class MainActivity extends AppCompatActivity {
 
     public static final String PREFS_NAME = "AUTH";
+    private boolean isRequest;
+    private String isRequestId;
+
     // TODO: buat gradien instagram untuk header
     LinearLayout layoutHeader;
     TextView tv_clock;
@@ -43,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
     Button btn_logout;
     ProgressDialog progress_dialog;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,6 +54,10 @@ public class MainActivity extends AppCompatActivity {
 
         //Check permission
         checkPermission();
+        getBundleAbsen();
+        if (isRequest){
+            formTelat(savedInstanceState);
+        }
 
         //Component Initialization
         layoutHeader = findViewById(R.id.layoutHeader);
@@ -80,33 +88,102 @@ public class MainActivity extends AppCompatActivity {
         card_pulang.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                long date = System.currentTimeMillis();
-                SimpleDateFormat clockFormat = new SimpleDateFormat("h");
-                SimpleDateFormat pmFormat = new SimpleDateFormat("a");
-                int currentClock = Integer.parseInt(clockFormat.format(date));
-                int startPulangClock = 5;
-                String pm = pmFormat.format(date);
-                if (currentClock == startPulangClock && pm.equals("PM")) {
-                    pulang();
-                }else {
-                    formPulang(savedInstanceState);
-                }
+                progress_dialog = new ProgressDialog(MainActivity.this);
+                progress_dialog.setMessage("Harap tunggu...");
+                progress_dialog.setCancelable(false);
+                progress_dialog.show();
+                Call<Response> result = AttendanceApi.getAPIService().pulang();
+                result.enqueue(new Callback<Response>() {
+                    @Override
+                    public void onResponse(Call<Response> call, retrofit2.Response<Response> response) {
+                        progress_dialog.dismiss();
+                        try {
+                            if(response.body()!=null) {
+                                Response responses = response.body();
+                                String status = responses.getMessage();
+                                if (status.equals("true")) {
+                                    keluar();
+                                }else{
+                                    formPulang(savedInstanceState);
+                                }
+                            }
+                        }catch (Exception e){
+                            e.printStackTrace();
+                            Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<Response> call, Throwable t) {
+                        progress_dialog.dismiss();
+                        t.printStackTrace();
+                        if (t.getMessage().equals("timeout")){
+                            Toasty.error(MainActivity.this, "Database Attendance timeout, hubungi staff IT!", Toast.LENGTH_SHORT, true).show();
+                        }else {
+                            Toasty.error(MainActivity.this, "Server sedang dalam pemeliharaan!", Toast.LENGTH_SHORT, true).show();
+                        }
+                    }
+                });
+
+//                long date = System.currentTimeMillis();
+//                SimpleDateFormat clockFormat = new SimpleDateFormat("h");
+//                SimpleDateFormat pmFormat = new SimpleDateFormat("a");
+//                int currentClock = Integer.parseInt(clockFormat.format(date));
+//                int startPulangClock = 5;
+//                String pm = pmFormat.format(date);
+//                if (currentClock == startPulangClock && pm.equals("PM")) {
+//                }else {
+//                }
             }
         });
         card_lembur.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                long date = System.currentTimeMillis();
-                SimpleDateFormat clockFormat = new SimpleDateFormat("h");
-                SimpleDateFormat pmFormat = new SimpleDateFormat("a");
-                int currentClock = Integer.parseInt(clockFormat.format(date));
-                int startLemburClock = 5;
-                String pm = pmFormat.format(date);
-                if (currentClock >= startLemburClock && pm.equals("PM")) {
-                    formLembur(savedInstanceState);
-                }else {
-                    Toasty.info(MainActivity.this, "Waktu lembur belum dimulai", Toast.LENGTH_SHORT, true).show();
-                }
+                progress_dialog = new ProgressDialog(MainActivity.this);
+                progress_dialog.setMessage("Harap tunggu...");
+                progress_dialog.setCancelable(false);
+                progress_dialog.show();
+                Call<Response> result = AttendanceApi.getAPIService().over();
+                result.enqueue(new Callback<Response>() {
+                    @Override
+                    public void onResponse(Call<Response> call, retrofit2.Response<Response> response) {
+                        progress_dialog.dismiss();
+                        try {
+                            if(response.body()!=null) {
+                                Response responses = response.body();
+                                String status = responses.getMessage();
+                                if (status.equals("true")) {
+                                    formLembur(savedInstanceState);
+                                }else{
+                                    Toasty.info(MainActivity.this, "Waktu lembur belum dimulai", Toast.LENGTH_SHORT, true).show();
+                                }
+                            }
+                        }catch (Exception e){
+                            e.printStackTrace();
+                            Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<Response> call, Throwable t) {
+                        progress_dialog.dismiss();
+                        t.printStackTrace();
+                        if (t.getMessage().equals("timeout")){
+                            Toasty.error(MainActivity.this, "Database Attendance timeout, hubungi staff IT!", Toast.LENGTH_SHORT, true).show();
+                        }else {
+                            Toasty.error(MainActivity.this, "Server sedang dalam pemeliharaan!", Toast.LENGTH_SHORT, true).show();
+                        }
+                    }
+                });
+//                long date = System.currentTimeMillis();
+//                SimpleDateFormat clockFormat = new SimpleDateFormat("h");
+//                SimpleDateFormat pmFormat = new SimpleDateFormat("a");
+//                int currentClock = Integer.parseInt(clockFormat.format(date));
+//                int startLemburClock = 5;
+//                String pm = pmFormat.format(date);
+//                if (currentClock >= startLemburClock && pm.equals("PM")) {
+//                }else {
+//                }
             }
         });
         btn_logout.setOnClickListener(new View.OnClickListener() {
@@ -191,7 +268,7 @@ public class MainActivity extends AppCompatActivity {
                 progress_dialog.dismiss();
                 t.printStackTrace();
                 if (t.getMessage().equals("timeout")){
-                    Toasty.error(MainActivity.this, "Database Attendance timeout, coba lagi!", Toast.LENGTH_SHORT, true).show();
+                    Toasty.error(MainActivity.this, "Database Attendance timeout, hubungi staff IT!", Toast.LENGTH_SHORT, true).show();
                 }else {
                     Toasty.error(MainActivity.this, "Server sedang dalam pemeliharaan!", Toast.LENGTH_SHORT, true).show();
                 }
@@ -199,7 +276,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void pulang(){
+    private void keluar(){
         HashMap<String, String> params = new HashMap<>();
         params.put("karyawan_id", getSharedPrefId());
 
@@ -208,7 +285,7 @@ public class MainActivity extends AppCompatActivity {
         progress_dialog.setCancelable(false);
         progress_dialog.show();
 
-        Call<Response> result = AttendanceApi.getAPIService().pulang(params);
+        Call<Response> result = AttendanceApi.getAPIService().keluar(params);
         result.enqueue(new Callback<Response>() {
             @Override
             public void onResponse(Call<Response> call, retrofit2.Response<Response> response) {
@@ -234,7 +311,7 @@ public class MainActivity extends AppCompatActivity {
                 progress_dialog.dismiss();
                 t.printStackTrace();
                 if (t.getMessage().equals("timeout")){
-                    Toasty.error(MainActivity.this, "Database Attendance timeout, coba lagi!", Toast.LENGTH_SHORT, true).show();
+                    Toasty.error(MainActivity.this, "Database Attendance timeout, hubungi staff IT!", Toast.LENGTH_SHORT, true).show();
                 }else {
                     Toasty.error(MainActivity.this, "Server sedang dalam pemeliharaan!", Toast.LENGTH_SHORT, true).show();
                 }
@@ -278,7 +355,7 @@ public class MainActivity extends AppCompatActivity {
                 progress_dialog.dismiss();
                 t.printStackTrace();
                 if (t.getMessage().equals("timeout")){
-                    Toasty.error(MainActivity.this, "Database Attendance timeout, coba lagi!", Toast.LENGTH_SHORT, true).show();
+                    Toasty.error(MainActivity.this, "Database Attendance timeout, hubungi staff IT!", Toast.LENGTH_SHORT, true).show();
                 }else {
                     Toasty.error(MainActivity.this, "Server sedang dalam pemeliharaan!", Toast.LENGTH_SHORT, true).show();
                 }
@@ -323,7 +400,50 @@ public class MainActivity extends AppCompatActivity {
                 progress_dialog.dismiss();
                 t.printStackTrace();
                 if (t.getMessage().equals("timeout")){
-                    Toasty.error(MainActivity.this, "Database Attendance timeout, coba lagi!", Toast.LENGTH_SHORT, true).show();
+                    Toasty.error(MainActivity.this, "Database Attendance timeout, hubungi staff IT!", Toast.LENGTH_SHORT, true).show();
+                }else {
+                    Toasty.error(MainActivity.this, "Server sedang dalam pemeliharaan!", Toast.LENGTH_SHORT, true).show();
+                }
+            }
+        });
+    }
+
+    private void telat(String id, String alasan){
+        HashMap<String, String> params = new HashMap<>();
+        params.put("alasan", alasan);
+
+        progress_dialog = new ProgressDialog(MainActivity.this);
+        progress_dialog.setMessage("Harap tunggu...");
+        progress_dialog.setCancelable(false);
+        progress_dialog.show();
+
+        Call<Response> result = AttendanceApi.getAPIService().editTelat(id, params);
+        result.enqueue(new Callback<Response>() {
+            @Override
+            public void onResponse(Call<Response> call, retrofit2.Response<Response> response) {
+                progress_dialog.dismiss();
+                try {
+                    if(response.body()!=null) {
+                        Response responses = response.body();
+                        String status = responses.getMessage();
+                        if (status.equals("success")) {
+                            Toasty.success(MainActivity.this, "Alasan anda menunggu Approval", Toast.LENGTH_SHORT,true).show();
+                        }else if(status.equals("failed")){
+                            Toasty.warning(MainActivity.this, "Gagal memasukkan Alsan", Toast.LENGTH_SHORT,true).show();
+                        }
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                    Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Response> call, Throwable t) {
+                progress_dialog.dismiss();
+                t.printStackTrace();
+                if (t.getMessage().equals("timeout")){
+                    Toasty.error(MainActivity.this, "Database Attendance timeout, hubungi staff IT!", Toast.LENGTH_SHORT, true).show();
                 }else {
                     Toasty.error(MainActivity.this, "Server sedang dalam pemeliharaan!", Toast.LENGTH_SHORT, true).show();
                 }
@@ -347,6 +467,11 @@ public class MainActivity extends AppCompatActivity {
         lembur(alasan,durasi);
     }
 
+    private void sendTelat(String args){
+        //TODO: ID tabel absensi nya juga
+        telat(isRequestId, args);
+    }
+
     private void formPulang(Bundle savedInstanceState) {
         new LovelyTextInputDialog(this, R.style.EditTextTintTheme)
                 .setTopColorRes(R.color.colorPrimary)
@@ -354,8 +479,13 @@ public class MainActivity extends AppCompatActivity {
                 .setMessage("Masukkan alasan anda")
                 .setHint("Contoh : izin ke bank")
                 .setIcon(R.drawable.ic_assignment_white_36dp)
+                .setInputFilter("Anda harus memasukkan alasan!", new LovelyTextInputDialog.TextFilter() {
+                    @Override
+                    public boolean check(String text) {
+                        return text.matches("\\w.*");
+                    }
+                })
                 .setConfirmButton(android.R.string.ok, text -> mabal(text))
-                .setNegativeButton(android.R.string.no, null)
                 .setSavedInstanceState(savedInstanceState)
                 .configureEditText(editText -> editText.setMaxLines(1))
                 .show();
@@ -379,6 +509,34 @@ public class MainActivity extends AppCompatActivity {
                 .setSavedInstanceState(savedInstanceState)
                 .configureEditText(editText -> editText.setMaxLines(1))
                 .show();
+    }
+
+    private void formTelat(Bundle savedInstanceState) {
+        new LovelyTextInputDialog(this, R.style.EditTextTintTheme)
+                .setTopColorRes(R.color.colorPrimary)
+                .setTitle("Form Telat")
+                .setMessage("Isi alasan mengapa anda telat masuk")
+                .setCancelable(false)
+                .setHint("Contoh : Jalan macet")
+                .setIcon(R.drawable.ic_assignment_white_36dp)
+                .setInputFilter("Anda harus memasukkan alasan!", new LovelyTextInputDialog.TextFilter() {
+                    @Override
+                    public boolean check(String text) {
+                        return text.matches("\\w.*");
+                    }
+                })
+                .setConfirmButton(android.R.string.ok, text -> sendTelat(text))
+                .setSavedInstanceState(savedInstanceState)
+                .configureEditText(editText -> editText.setMaxLines(1))
+                .show();
+    }
+
+    private void getBundleAbsen(){
+        Bundle extras = getIntent().getExtras();
+        if(extras != null) {
+            isRequest = extras.getBoolean("request", false);
+            isRequestId = extras.getString("requestid", null);
+        }
     }
 
     @Override

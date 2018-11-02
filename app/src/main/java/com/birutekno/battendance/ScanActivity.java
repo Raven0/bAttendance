@@ -68,7 +68,6 @@ public class ScanActivity extends AppCompatActivity {
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         intent.putExtra("result", result.toString());
                         intent.putExtra("absen", absen);
-                        startActivity(intent);
 
                         try {
                             JSONObject object = new JSONObject(result.toString());
@@ -77,8 +76,9 @@ public class ScanActivity extends AppCompatActivity {
                         }catch (JSONException e){
                             e.printStackTrace();
                             Toasty.error(ScanActivity.this, "Gagal memparse data!", Toast.LENGTH_SHORT, true).show();
-                            Intent redirect = new Intent(ScanActivity.this, MainActivity.class);
-                            startActivity(redirect);
+                            cancelAbsen();
+//                            Intent redirect = new Intent(ScanActivity.this, MainActivity.class);
+//                            startActivity(redirect);
                         }
                     }
                 });
@@ -164,7 +164,7 @@ public class ScanActivity extends AppCompatActivity {
                 progress_dialog.dismiss();
                 t.printStackTrace();
                 if (t.getMessage().equals("timeout")){
-                    Toasty.error(ScanActivity.this, "Database Attendance timeout, coba lagi!", Toast.LENGTH_SHORT, true).show();
+                    Toasty.error(ScanActivity.this, "Database Attendance timeout, hubungi staff IT!", Toast.LENGTH_SHORT, true).show();
                 }else {
                     Toasty.error(ScanActivity.this, "Server sedang dalam pemeliharaan!", Toast.LENGTH_SHORT, true).show();
                 }
@@ -205,7 +205,7 @@ public class ScanActivity extends AppCompatActivity {
                 progress_dialog.dismiss();
                 t.printStackTrace();
                 if (t.getMessage().equals("timeout")){
-                    Toasty.error(ScanActivity.this, "Database Attendance timeout, coba lagi!", Toast.LENGTH_SHORT, true).show();
+                    Toasty.error(ScanActivity.this, "Database Attendance timeout, hubungi staff IT!", Toast.LENGTH_SHORT, true).show();
                 }else {
                     Toasty.error(ScanActivity.this, "Server sedang dalam pemeliharaan!", Toast.LENGTH_SHORT, true).show();
                 }

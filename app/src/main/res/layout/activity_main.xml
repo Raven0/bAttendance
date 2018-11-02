@@ -101,16 +101,16 @@
                 android:src="@drawable/masuk"/>
 
             <ImageView
-                android:id="@+id/pulangCard"
-                android:layout_width="match_parent"
-                android:layout_height="85dp"
-                android:src="@drawable/pulang"/>
-
-            <ImageView
                 android:id="@+id/lemburCard"
                 android:layout_width="match_parent"
                 android:layout_height="88dp"
                 android:src="@drawable/lembur"/>
+
+            <ImageView
+                android:id="@+id/pulangCard"
+                android:layout_width="match_parent"
+                android:layout_height="85dp"
+                android:src="@drawable/pulang"/>
 
         </LinearLayout>
 
