@@ -263,13 +263,13 @@ public class TfaActivity extends AppCompatActivity implements View.OnClickListen
                         String message = responses.getText();
                         if (status.equals("success")) {
                             Intent intent = new Intent(TfaActivity.this, MainActivity.class);
-                            Toasty.success(TfaActivity.this, message, Toast.LENGTH_LONG, true).show();
+//                            Toasty.success(TfaActivity.this, message, Toast.LENGTH_LONG, true).show();
                             setTrigger(verifikasi, "2", intent);
                         }else if(status.equals("request")){
                             Intent intent = new Intent(TfaActivity.this, MainActivity.class);
                             intent.putExtra("request", true);
                             intent.putExtra("requestid", absen);
-                            Toasty.warning(TfaActivity.this, message, Toast.LENGTH_LONG, true).show();
+//                            Toasty.warning(TfaActivity.this, message, Toast.LENGTH_LONG, true).show();
                             setTrigger(verifikasi, "2", intent);
                         }else if(status.equals("failed")){
                             Toasty.warning(TfaActivity.this, "Anda sudah melakukan absen masuk!", Toast.LENGTH_SHORT,true).show();

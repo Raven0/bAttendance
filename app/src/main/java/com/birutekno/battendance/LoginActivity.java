@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -15,6 +16,7 @@ import com.birutekno.battendance.helper.AttendanceApi;
 import com.birutekno.battendance.model.AuthModel;
 import com.birutekno.battendance.model.Karyawan;
 import com.birutekno.battendance.model.Response;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.util.HashMap;
 
@@ -68,8 +70,13 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void prosesLogin(String nik, Intent intent){
+        String tokenDevice = FirebaseInstanceId.getInstance().getToken();
+        Log.d("DEVICE TOKEN", "onResponse: " + tokenDevice);
+
         HashMap<String, String> params = new HashMap<>();
+        //TODO: Adding device token
         params.put("nik", nik);
+        params.put("device_token", tokenDevice);
 
         progress_dialog = new ProgressDialog(LoginActivity.this);
         progress_dialog.setMessage("Harap tunggu...");
