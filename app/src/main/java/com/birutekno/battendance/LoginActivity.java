@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -58,10 +59,14 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void login(EditText et_nik){
-        String nik = et_nik.getText().toString().trim();
-        Intent intent = new Intent(LoginActivity.this, PinActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        prosesLogin(nik, intent);
+        if (!TextUtils.isEmpty(et_nik.getText())){
+            String nik = et_nik.getText().toString().trim();
+            Intent intent = new Intent(LoginActivity.this, PinActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            prosesLogin(nik, intent);
+        }else {
+            Toasty.warning(LoginActivity.this, "Masukkan NIK Terlebih dahulu", Toast.LENGTH_SHORT,true).show();
+        }
     }
 
     private void registrasi(){
